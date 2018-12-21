@@ -44,11 +44,10 @@ require_once('controllers/BackOfficeController.php');
 $frontOfficeControleur = new FrontOfficeController();
 $backOfficeControleur = new BackOfficeController();
 
-/*
 debug("Mes controlleurs : ");
 debug($frontOfficeControleur);
 debug($backOfficeControleur);
-*/
+
 
 
 //Récupération de l' URL
