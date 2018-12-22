@@ -77,10 +77,11 @@ class OptionsManager{
     {
         //si le paramètre est un entier, c'est qu'on a fourni un identifiant.
         if(is_int($info)){
-            // Execution alors alors une requête COUNT() avec une clause WHERE, et on retourne un boolean.
-            return(bool) $this->_db->query('SELECT COUNT(*) FROM Options WHERE ID = '.$info)->fecthColumn();
+            // Execution alors une requête COUNT() avec une clause WHERE, et on retourne un boolean.
+            return (bool)$this->_db->query('SELECT COUNT(*) FROM Options WHERE ID = '.$info)->fetchColumn();
 
-            return(bool) $requeste->fecthColumn();
+
+
         }
     }
 
@@ -94,8 +95,6 @@ class OptionsManager{
         $requeste->bindValue(':prix',$option->getPrix());
         $requeste->bindValue(':image',$option->getImage());
 
-        // Execution de la requête.
-        $requeste->execute();
 
         // Execution de la requête.
         $reponse = $requeste->execute();

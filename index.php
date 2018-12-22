@@ -63,7 +63,7 @@ $uri = $uriTab[0];
 //debug($myDB);
 //exit();
 // debug($uri);
-$id = '1';
+$id = 2;
 $nom = '20h de conduite';
 $prix = 690.99;
 $image = 'conduite.jpg';
@@ -72,23 +72,51 @@ $image = 'conduite.jpg';
 
 $option = new Option(['id' => $id, 'nom'=> $nom, 'prix'=> $prix, 'image'=> $image]);
 
+
 $optionsManager = new OptionsManager($db);
 
 // test la methode add
 // $var = $optionsManager->add($option);
 
-// test de la methode count
-debug($optionsManager->count());
-// test de la methode de la récuperation de l'objet option
-debug($optionsManager->getOption(1));
-// test de la methode delete
-debug($optionsManager->delete($option));
+
 // test de la methode count
 debug($optionsManager->count());
 
+// test de la methode de la récuperation de l'objet option
+debug($optionsManager->getOption(2));
+
+// test de la methode delete
+// debug($optionsManager->delete($option));
+
+// test de la methode count
+debug($optionsManager->count());
+
+// test de la methode exists sur un objet existant dans la base de donnee
+debug($optionsManager->exists($option->getId()));
+
+//test de la methode exists sur un objet non existant dans la base de donnee
+debug($optionsManager->exists(3));
+
+
+
+// test la methode updadeSansImage
+$option->setNom('30h de conduite');
+$option->setPrix(1189.99);
+debug($optionsManager->updateSansImage($option));
+debug($option->toString());
+
+// test de la methode updateAvecImage
+$option->setImage('voiture.png');
+debug($optionsManager->update($option));
+debug($option->toString());
 
 // echo $var->toString();
 // debug($option->toString());
+
+// test de la methode selectAllOptions
+debug($optionsManager->selectAllOptions());
+
+
 
 
 exit();
