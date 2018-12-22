@@ -145,18 +145,21 @@ class FormulesManager {
     }
 
 
-    public function associationOptionFormule(int $idoption, int $idformule) {
+    public function associationOptionFormule($idoption, $idformule) {
+
+        $idoption = intval($idoption);
+        $idformule = intval($idformule);
 
         $requeste = $this->_db->prepare('INSERT INTO COMPOSER(IDOPTION,IDFORMULE) VALUES (:idoption,:idformule)');
 
         $requeste->bindValue(':idoption',$idoption);
-        $requeste->bindValue('idformule',$idformule);
+        $requeste->bindValue(':idformule',$idformule);
 
         $requeste->execute();
 
     }
 
-    public function getPrixFormule(int $idformule)
+    public function getPrixFormule($idformule)
     {
 
         $requeste = $this->_db->query('SELECT SUM(PRIX) AS prix_total_formule FROM Options INNER JOIN COMPOSER ON Options.id = COMPOSER.IDOPTION WHERE IDFORMULE = ' . $idformule);
@@ -176,7 +179,7 @@ class FormulesManager {
         return $res;
     }
 
-    public function updatePrixFormule(int $id) {
+    public function updatePrixFormule($id) {
 
         $newprix = $this->getPrixFormule($id);
 
