@@ -116,7 +116,7 @@ class OptionsManager{
         return $reponse;
     }
 
-    public function getPlat($id){
+    public function getOption($id){
 
         $requeste = $this->_db->query('SELECT ID, PRIX, IMAGE FROM Options WHERE id ='.id);
 
@@ -125,7 +125,7 @@ class OptionsManager{
         return newOption($donnees);
     }
 
-    public function selectAllPlats()
+    public function selectAllOptions()
     {
         $options = [];
 

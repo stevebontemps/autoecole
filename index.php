@@ -61,39 +61,9 @@ $uri = $uriTab[0];
 
 // debug($uri);
 
-/*
-debug(DATABASE_HOST);
-debug(DATABASE_NAME);
-debug(DATABASE_USER);
-debug(DATABASE_PASSWORD);
 
 
-$nom = 'Menard';
-$prenom = 'Robert';
-$adresse = '17 rue Henri 4';
-$ville = 'Beziers';
-$codepostal = '34500';
 
-$monhumain = new Humain(['nom' => $nom, 'prenom' => $prenom, 'adresse' => $adresse, 'ville' => $ville, 'codepostal' => $codepostal]);
-*/
-
-/*
-$id = '1';
-$nom = 'Menard';
-$prenom = 'Robert';
-$email = 'Menard.Robert@beziers.fr';
-$password = '34500';
-
-
-$monAdmin = new Admin([ 'id'=> $id,
-                        'nom' => $nom,
-                        'prenom' => $prenom,
-                        'email' => $email,
-                        'password' => $password ]);
-
-debug($monAdmin->toString());
-
-*/
 
 
 //Gestion des routes
