@@ -7,7 +7,7 @@ class OptionsManager{
     /**
      * @param mixed $db
      */
-    public function setDb(PDO $db)
+    public function setDb($db)
     {
         $this->_db = $db;
     }
@@ -17,24 +17,25 @@ class OptionsManager{
         $this->setDb($db);
     }
 
-    public function add(Option $option)
+    public function add($option)
     {
         // Préparation de la requête d'insertion.
         // Assignation des valeurs pour le plat.
         // Exécution de la requête.
 
-        $requeste = $this->_db->prepare('INSERT INTO options (NOM,PRIX,IMAGE) VALUES (:nom,:prix;:image)');
+        $requeste = $this->_db->prepare('INSERT INTO Options (NOM,PRIX,IMAGE) VALUES (:nom,:prix,:image)');
 
-        $requeste->bindValue(':nom', $option->getNom());
-        $requeste->bindValue(':prix', $option->getPrix());
-        $requeste->bindValue(':image',$option->getImage());
+        $requeste->bindParam(':nom', $option->getNom());
+        $requeste->bindParam(':prix', $option->getPrix());
+        $requeste->bindParam(':image', $option->getImage());
+
 
         // $requeste->bindValue(':nom',$option->getNom(),PDO::PARAM_STR);
         // $requeste->bindValue(':prix',0.0);
         // $requeste->bindValue(':image','hello.jpg');
 
         //Execution de la requête.
-        $reponse =$requeste->execute();
+        $requeste->execute();
 
         // $requeste = bindValue(':degats',$perso->_degats,PDO::PARAM_INT);
         //  $requeste = bindValue(':degats',0);
@@ -44,10 +45,11 @@ class OptionsManager{
         $option->hydrate(
             [   'id'    => $this->_db->lastInsertId(),
                 'nom'   => $option->getNom(),
-                'prix'  => $option->getPrix()]
+                'prix'  => $option->getPrix(),
+                'image' => $option->getImage()]
         );
 
-        return $reponse;
+        return $option;
 
     }
 
@@ -63,10 +65,10 @@ class OptionsManager{
     public function delete(Option $option)
     {
         //Execute une requête de type DELETE d'abord sur la table de relation Composer Option_Formule
-        $d = $this->_db->exec('DELETE FROM Composer WHERE IDOPTION = '. $option->getId());
+        $this->_db->exec('DELETE FROM Composer WHERE IDOPTION = '. $option->getId());
 
         // Execute une requête de type DELETE sur la table Option
-        $requeste = $this->_db->exec('DELETE FROM Options WHERE ID = '.$option->get());
+        $requeste = $this->_db->exec('DELETE FROM Options WHERE ID = '.$option->getId());
 
         return $requeste;
     }
@@ -118,11 +120,11 @@ class OptionsManager{
 
     public function getOption($id){
 
-        $requeste = $this->_db->query('SELECT ID, PRIX, IMAGE FROM Options WHERE id ='.id);
+        $requeste = $this->_db->query('SELECT ID, NOM, PRIX, IMAGE FROM Options WHERE id = '. $id);
 
         $donnees = $requeste->fetch(PDO::FETCH_ASSOC);
 
-        return newOption($donnees);
+        return new Option($donnees);
     }
 
     public function selectAllOptions()

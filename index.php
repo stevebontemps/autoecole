@@ -30,7 +30,9 @@ ModelsAutoloader::register();
 //recupere instance de la connexion a la Base de Donnees
 // On émet une alerte à chaque fois qu'une requête a échoué.
 $db = Db::getInstance();
-$db->getConnection()->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+//$db->getConnection()->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+
+//$myDB = $db->getConnection();
 
 
 // On enregistre notre autoload pour les controlleurs.
@@ -58,12 +60,38 @@ $uriTab = explode('?', $uri);
 $uri = $uriTab[0];
 
 /* Debug */
-
+//debug($myDB);
+//exit();
 // debug($uri);
+$id = '1';
+$nom = '20h de conduite';
+$prix = 690.99;
+$image = 'conduite.jpg';
+
+// INSERT INTO OPTIONS (NOM,PRIX,IMAGE) VALUES ('20h de conduite',690.99,'conduite.jpg');
+
+$option = new Option(['id' => $id, 'nom'=> $nom, 'prix'=> $prix, 'image'=> $image]);
+
+$optionsManager = new OptionsManager($db);
+
+// test la methode add
+// $var = $optionsManager->add($option);
+
+// test de la methode count
+debug($optionsManager->count());
+// test de la methode de la récuperation de l'objet option
+debug($optionsManager->getOption(1));
+// test de la methode delete
+debug($optionsManager->delete($option));
+// test de la methode count
+debug($optionsManager->count());
 
 
+// echo $var->toString();
+// debug($option->toString());
 
 
+exit();
 
 
 //Gestion des routes

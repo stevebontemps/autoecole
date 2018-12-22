@@ -45,12 +45,11 @@ class Option{
     public function setId($id)
     {
         # on parse la valeur de l'id en INT
-        $this->_id = $id;
+        $id = intval($id);
         // On vérifie que l id superieur à zéro
-        if ($id > 0)
-        {
-            $this->_id = $id;
-        }
+
+        $this->_id = $id;
+
     }
 
 
@@ -124,6 +123,14 @@ class Option{
     {
         # retourne l'image de l'objet en question
         return $this->_image;
+    }
+
+    public function toString()
+    {
+        return  $this->getId() . '<br/>' .
+                $this->getNom() . '<br/>' .
+                $this->getPrix() . '<br/>' .
+                $this->getImage() . '<br/>';
     }
 
 }
