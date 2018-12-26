@@ -80,46 +80,98 @@ $optionsManager = new OptionsManager($db);
 
 
 // test de la methode count
-debug($optionsManager->count());
+//debug($optionsManager->count());
 
 // test de la methode de la récuperation de l'objet option
-debug($optionsManager->getOption(2));
+// debug($optionsManager->getOption(2));
 
 // test de la methode delete
 // debug($optionsManager->delete($option));
 
 // test de la methode count
-debug($optionsManager->count());
+// debug($optionsManager->count());
 
 // test de la methode exists sur un objet existant dans la base de donnee
-debug($optionsManager->exists($option->getId()));
+// debug($optionsManager->exists($option->getId()));
 
-//test de la methode exists sur un objet non existant dans la base de donnee
-debug($optionsManager->exists(3));
+// test de la methode exists sur un objet non existant dans la base de donnee
+// debug($optionsManager->exists(3));
 
 
 
 // test la methode updadeSansImage
-$option->setNom('30h de conduite');
-$option->setPrix(1189.99);
-debug($optionsManager->updateSansImage($option));
-debug($option->toString());
+// $option->setNom('30h de conduite');
+// $option->setPrix(1189.99);
+// debug($optionsManager->updateSansImage($option));
+// debug($option->toString());
 
 // test de la methode updateAvecImage
-$option->setImage('voiture.png');
-debug($optionsManager->update($option));
-debug($option->toString());
+// $option->setImage('voiture.png');
+// debug($optionsManager->update($option));
+// debug($option->toString());
 
 // echo $var->toString();
 // debug($option->toString());
 
 // test de la methode selectAllOptions
-debug($optionsManager->selectAllOptions());
+// debug($optionsManager->selectAllOptions());
+$idF = 2;
+$nomF = 'conduite accompagnée';
+$prixF = 1690.99;
+$imageF = 'conduite_accompagnée.jpg';
+
+$formule = new Formule(['id' => $idF, 'nom' => $nomF, 'prix' => $prixF, 'image' => $imageF ]);
 
 
+$formulesManager = new FormulesManager($db);
+//debug($formulesManager);
 
-
+// test la methode add  INSERT INTO Formules (NOM,PRIX,IMAGE) VALUES ('conduite accompagnée',1690.99,'conduite_accompagnée.jpg');
+$var = $formulesManager->add($formule);
+debug($formule);
+debug($var);
 exit();
+// test la methode count
+debug($formulesManager->count());
+
+// test la methode countOption
+
+
+// test la methode delete
+
+
+
+// test la methode exists
+
+
+// test la methode update
+
+
+// test la methode updateSansImage
+
+
+
+// test la methode associationOptionFormule
+
+
+
+// test la methode updatePrixFormule
+
+
+
+// test la methode selectAllFormules
+
+
+
+// test la methode faireCorrespondreOptionsFormule
+
+
+
+
+// test la methode suppressionCorrespondanceOptionsFormule
+
+
+
 
 
 //Gestion des routes

@@ -14,13 +14,12 @@ class FormulesManager {
         $this->setDb($db);
     }
 
-    public function add(Formule $formule)
+    public function add($formule)
     {
         // Préparation de la requête d'insertion.
         // Assignation des valeurs pour le Menu.
         // Exécution de la requête.
-
-        $requeste = $this->_db->prepare('INSERT INTO Formules(NOM,PRIX,IMAGE) VALUES (:nom,:prix,:image)');
+        
 
         $requeste = $this->_db->prepare('INSERT INTO Formules(NOM,PRIX,IMAGE) VALUES (:nom,:prix,:image)');
 
@@ -33,8 +32,8 @@ class FormulesManager {
         // Hydratation de Formule passé en paramètre avec assignation de son identifiant et du prix initial.
         $formule->hydrate(
             [   'id'   => $this->_db->lastInsertId(),
-                'nom'  => $this->getNom(),
-                'prix' => $this->getPrix()]
+                'nom'  => $formule->getNom(),
+                'prix' => $formule->getPrix()]
         );
 
         return $reponse;
@@ -164,7 +163,7 @@ class FormulesManager {
 
         $requeste = $this->_db->query('SELECT SUM(PRIX) AS prix_total_formule FROM Options INNER JOIN COMPOSER ON Options.id = COMPOSER.IDOPTION WHERE IDFORMULE = ' . $idformule);
 
-        //test debug
+        // test debug
         //  $request->debugDumpParams();
         //  $res = $request->fetch(PDO::FETCH_ASSOC);
         //  $res = $request->fetchColumn();

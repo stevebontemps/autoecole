@@ -28,6 +28,6 @@ class FrontOfficeController
     }
     public function afficherPageFormule()
     {
-        require_once('views/user/formule.php');
+        require_once('views/user/Formule.php');
     }
 }
