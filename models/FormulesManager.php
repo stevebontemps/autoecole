@@ -4,7 +4,7 @@ class FormulesManager {
 
     private $_db;
 
-    public function setDb(PDO $db)
+    public function setDb($db)
     {
         $this->_db = $db;
     }
@@ -19,30 +19,33 @@ class FormulesManager {
         // Préparation de la requête d'insertion.
         // Assignation des valeurs pour le Menu.
         // Exécution de la requête.
-        
+
 
         $requeste = $this->_db->prepare('INSERT INTO Formules(NOM,PRIX,IMAGE) VALUES (:nom,:prix,:image)');
 
-        $requeste->bindValue(':nom',$formule->getNom());
-        $requeste->bindValue(':prix',$formule->getPrix());
-        $requeste->bindValue(':image',$formule->getImage());
+        $requeste->bindParam(':nom',$formule->getNom());
+        $requeste->bindParam(':prix',$formule->getPrix());
+        $requeste->bindParam(':image',$formule->getImage());
 
-        $reponse = $requeste->execute();
+        // Execution de la requête
+        $requeste->execute();
 
         // Hydratation de Formule passé en paramètre avec assignation de son identifiant et du prix initial.
         $formule->hydrate(
-            [   'id'   => $this->_db->lastInsertId(),
-                'nom'  => $formule->getNom(),
-                'prix' => $formule->getPrix()]
+            [   'id'    => $this->_db->lastInsertId(),
+                'nom'   => $formule->getNom(),
+                'prix'  => $formule->getPrix(),
+                'image' => $formule->getImage()]
         );
 
-        return $reponse;
+        return $formule;
 
     }
 
     public function count()
     {
         // Exécute une requête COUNT() et retourne le nombre de résultats retourné.
+        // fetchColumn - Retourne une colonne depuis la ligne suivante d'un jeu de resultats.
         $requeste = $this->_db->query('SELECT count(*) FROM Formules')->fetchColumn();
 
         return $requeste;
@@ -66,7 +69,7 @@ class FormulesManager {
         $reqDeSupp =$this->_db->exec('DELETE FROM Composer WHERE IDFORMULE = '.$formule->getId());
 
         // Exécute une requête de type DELETE sur la table Formule.
-        $requeste = $this->_db->exec('DELETE FROM Formule WHERE ID = '.$formule->getId());
+        $requeste = $this->_db->exec('DELETE FROM Formules WHERE ID = '.$formule->getId());
 
         return $requeste;
     }
@@ -126,7 +129,7 @@ class FormulesManager {
         // Exécute une requête de type SELECT avec une clause WHERE, et retourne un objet Formule.
         if(is_int($info)){
             $requeste = $this->_db->query('SELECT ID, NOM, PRIX, IMAGE FROM Formule WHERE ID = '.$info);
-
+            
             $donnees = $requeste->fetch(PDO::FETCH_ASSOC);
 
             return new Formule($donnees);
@@ -134,7 +137,7 @@ class FormulesManager {
         // Sinon, on veut récupérer le personnage avec son nom.
         // Exécute une requête de type SELECT avec une clause WHERE, et retourne un objet Personnage.
         else {
-            $requeste = $this->_db->prepare('SELECT ID, NOM, PRIX, IMAGE FROM Menus WHERE NOM = :nom');
+            $requeste = $this->_db->prepare('SELECT ID, NOM, PRIX, IMAGE FROM Formules WHERE NOM = :nom');
             $requeste->execute([':nom' => $info]);
 
             $donnees = $requeste->fetch(PDO::FETCH_ASSOC);

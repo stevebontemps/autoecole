@@ -91,10 +91,10 @@ $optionsManager = new OptionsManager($db);
 // test de la methode count
 // debug($optionsManager->count());
 
-// test de la methode exists sur un objet existant dans la base de donnee
+// test de la methode exists sur un objet existant dans la base de donnees
 // debug($optionsManager->exists($option->getId()));
 
-// test de la methode exists sur un objet non existant dans la base de donnee
+// test de la methode exists sur un objet non existant dans la base de donnees
 // debug($optionsManager->exists(3));
 
 
@@ -130,19 +130,30 @@ $formulesManager = new FormulesManager($db);
 $var = $formulesManager->add($formule);
 debug($formule);
 debug($var);
-exit();
+
+// test la methode add
+$var = $formulesManager->add($formule);
+debug($var);
+
 // test la methode count
 debug($formulesManager->count());
 
-// test la methode countOption
+// test la methode countFormule
 
 
 // test la methode delete
-
-
+debug($formulesManager->delete($var));
 
 // test la methode exists
 
+
+// test getFormule($id)
+debug($formulesManager->getFormule(4));
+
+
+// countOptionAssociatedToFormuleId($formuleId)
+//debug($formulesManager->countOptionAssociatedToFormuleId($formuleId));
+//exit;
 
 // test la methode update
 
@@ -150,26 +161,19 @@ debug($formulesManager->count());
 // test la methode updateSansImage
 
 
-
 // test la methode associationOptionFormule
-
 
 
 // test la methode updatePrixFormule
 
 
-
 // test la methode selectAllFormules
-
 
 
 // test la methode faireCorrespondreOptionsFormule
 
 
-
-
 // test la methode suppressionCorrespondanceOptionsFormule
-
 
 
 
