@@ -31,14 +31,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Autoécole Auvolant</a>
+            <a class="navbar-brand" href="#">Restaurant POO</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="index.php">Accueil</a></li>
-                <li><a href="formule.php">Formule</a></li>
-                <li><a href="information.php">Information</a></li>
-                <li><a href="contact.php">Contact</a></li>
+                <li><a href="menu.php">Menu</a></li>
+                <li><a href="#">Info</a></li>
                 <li><a href="login.php">Login</a></li>
             </ul>
         </div>

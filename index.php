@@ -12,9 +12,10 @@ ini_set('display_errors', true);
 //          SESSIONS           //
 // --------------------------- //
 // ini_set('session.cookie_lifetime', false);
-session_start();
-// session_destroy();
 
+session_start();
+//session_destroy();
+// exit();
 
 // Inclusion des fichiers principaux
 include_once '_config/config.php';
@@ -30,13 +31,12 @@ ModelsAutoloader::register();
 //recupere instance de la connexion a la Base de Donnees
 // On émet une alerte à chaque fois qu'une requête a échoué.
 $db = Db::getInstance();
-//$db->getConnection()->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-
-//$myDB = $db->getConnection();
+$db->getConnection()->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+$pdo = $db->getConnection();
 
 
 // On enregistre notre autoload pour les controlleurs.
-//require('controllers/ControllersAutoloader.php');
+// require('controllers/ControllersAutoloader.php');
 // on appele une methode : register de la Classe Autoloader
 // ControllersAutoloader::register();
 
@@ -44,12 +44,16 @@ require_once('controllers/FrontOfficeController.php');
 require_once('controllers/BackOfficeController.php');
 
 $frontOfficeControleur = new FrontOfficeController();
-$backOfficeControleur = new BackOfficeController();
+$backOfficeControleur  = new BackOfficeController();
+
 /*
 debug("Mes controlleurs : ");
 debug($frontOfficeControleur);
 debug($backOfficeControleur);
 */
+
+// on initialise une DAO pour gerer les options
+$optionsManager = new OptionsManager($pdo);
 
 
 
@@ -59,123 +63,7 @@ $uri = substr($uri, strpos($uri, '/index.php'));
 $uriTab = explode('?', $uri);
 $uri = $uriTab[0];
 
-/* Debug */
-//debug($myDB);
-//exit();
-// debug($uri);
-$id = 2;
-$nom = '20h de conduite';
-$prix = 690.99;
-$image = 'conduite.jpg';
-
-// INSERT INTO OPTIONS (NOM,PRIX,IMAGE) VALUES ('20h de conduite',690.99,'conduite.jpg');
-
-$option = new Option(['id' => $id, 'nom'=> $nom, 'prix'=> $prix, 'image'=> $image]);
-
-
-$optionsManager = new OptionsManager($db);
-
-// test la methode add
-// $var = $optionsManager->add($option);
-
-
-// test de la methode count
-//debug($optionsManager->count());
-
-// test de la methode de la récuperation de l'objet option
-// debug($optionsManager->getOption(2));
-
-// test de la methode delete
-// debug($optionsManager->delete($option));
-
-// test de la methode count
-// debug($optionsManager->count());
-
-// test de la methode exists sur un objet existant dans la base de donnees
-// debug($optionsManager->exists($option->getId()));
-
-// test de la methode exists sur un objet non existant dans la base de donnees
-// debug($optionsManager->exists(3));
-
-
-
-// test la methode updadeSansImage
-// $option->setNom('30h de conduite');
-// $option->setPrix(1189.99);
-// debug($optionsManager->updateSansImage($option));
-// debug($option->toString());
-
-// test de la methode updateAvecImage
-// $option->setImage('voiture.png');
-// debug($optionsManager->update($option));
-// debug($option->toString());
-
-// echo $var->toString();
-// debug($option->toString());
-
-// test de la methode selectAllOptions
-// debug($optionsManager->selectAllOptions());
-$idF = 2;
-$nomF = 'conduite accompagnée';
-$prixF = 1690.99;
-$imageF = 'conduite_accompagnée.jpg';
-
-$formule = new Formule(['id' => $idF, 'nom' => $nomF, 'prix' => $prixF, 'image' => $imageF ]);
-
-
-$formulesManager = new FormulesManager($db);
-//debug($formulesManager);
-
-// test la methode add  INSERT INTO Formules (NOM,PRIX,IMAGE) VALUES ('conduite accompagnée',1690.99,'conduite_accompagnée.jpg');
-$var = $formulesManager->add($formule);
-debug($formule);
-debug($var);
-
-// test la methode add
-$var = $formulesManager->add($formule);
-debug($var);
-
-// test la methode count
-debug($formulesManager->count());
-
-// test la methode countFormule
-
-
-// test la methode delete
-debug($formulesManager->delete($var));
-
-// test la methode exists
-
-
-// test getFormule($id)
-debug($formulesManager->getFormule(4));
-
-
-// countOptionAssociatedToFormuleId($formuleId)
-//debug($formulesManager->countOptionAssociatedToFormuleId($formuleId));
-//exit;
-
-// test la methode update
-
-
-// test la methode updateSansImage
-
-
-// test la methode associationOptionFormule
-
-
-// test la methode updatePrixFormule
-
-
-// test la methode selectAllFormules
-
-
-// test la methode faireCorrespondreOptionsFormule
-
-
-// test la methode suppressionCorrespondanceOptionsFormule
-
-
+// WEBSITE_URL vaut : http://localhost/autoecole/
 
 
 //Gestion des routes
@@ -191,20 +79,83 @@ if(strcmp($uri, '/autoecole/') == 0){
 if(strcmp($uri, '/index.php') == 0){
     $frontOfficeControleur->afficherPageAccueil();
 }
+if(strcmp($uri, '/index.php/formules') == 0){
+    $frontOfficeControleur->afficherFormules($pdo);
+}
+if(strcmp($uri, '/index.php/formuleitem') == 0){
+    $frontOfficeControleur->afficherFormuleItems($pdo);
+}
 if(strcmp($uri, '/index.php/erreur') == 0){
     $frontOfficeControleur->afficherPageErreur();
 }
 if(strcmp($uri, '/index.php/login') == 0){
-    $frontOfficeControleur->afficherPageLogin();
+    $frontOfficeControleur->afficherPageLogin($pdo);
 }
-if(strcmp($uri,'/index.php/information') == 0){
-    $frontOfficeControleur->afficherPageInfo();
+if(strcmp($uri, '/index.php/back') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->afficherPageBack();
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
 }
-if(strcmp($uri,'/index.php/contact') == 0){
-    $frontOfficeControleur->afficherPageContact();
+if(strcmp($uri, '/index.php/addoption') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->afficherFormAddOption($pdo);
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
 }
-if(strcmp($uri,'/index.php/formule') == 0){
-    $frontOfficeControleur->afficherPageFormule();
+if(strcmp($uri, '/index.php/showoptions') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->afficherAllOptions($pdo);
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
+}
+if(strcmp($uri, '/index.php/deleteoption') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->deleteOption($pdo);
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
+}
+if(strcmp($uri, '/index.php/updateoption') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->updateOption($pdo);
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
+}
+if(strcmp($uri, '/index.php/addformule') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->afficherFormAddFormule($pdo);
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
+}
+if(strcmp($uri, '/index.php/showformules') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->afficherAllFormules($pdo);
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
+}
+if(strcmp($uri, '/index.php/deleteformule') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->deleteFormule($pdo);
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
+}
+if(strcmp($uri, '/index.php/updateformule') == 0){
+    if($_SESSION['login'] == "OK"){
+        $backOfficeControleur->updateFormule($pdo);
+    }else{
+        $frontOfficeControleur->afficherPageLogin($pdo);
+    }
+}
+if(strcmp($uri, '/index.php/deconnexion') == 0){
+    $backOfficeControleur->getDeconnexion();
 }
 /*
 else{

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -33,15 +33,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Auvolant Autoécole</a>
+            <a class="navbar-brand" href="<?=WEBSITE_URL?>">Auvolant Auto-école</a>
         </div>
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="<?=WEBSITE_URL?>">Accueil</a></li>
-                <li><a href="<?=WEBSITE_URL . 'index.php/formule'?>">Formule</a></li>
-                <li><a href="<?=WEBSITE_URL . 'index.php/information'?>">Information</a></li>
-                <li><a href="<?=WEBSITE_URL . 'index.php/contact'?>">Contact</a></li>
+                <li><a href="<?=WEBSITE_URL . 'index.php/formules'?>">Formules</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Info</a></li>
                 <li><a href="<?=WEBSITE_URL . 'index.php/login'?>">Login</a></li>
             </ul>
         </div>

@@ -1,28 +1,26 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: bontemps
- * Date: 19/12/18
- * Time: 10:50
+ * User: bruno
+ * Date: 22/12/18
+ * Time: 17:47
  */
 
-class Option{
+class Option
+{
 
     private $_id;
     private $_nom;
     private $_prix;
     private $_image;
 
-
     /* fonction hydratation des donnees provenant de la BDD */
-
     public function hydrate(array $donnees)
     {
         foreach($donnees as $key => $value)
         {
             // On récupère le nom de setter correspondant à l'attribut.
             $method = 'set'.ucfirst($key);
-
             // si le setter conrrespondant existe.
             if(method_exists($this,$method))
             {
@@ -31,28 +29,20 @@ class Option{
             }
         }
     }
-
-
     /* le constructeur de l'objet Option */
     public function __construct(array $donnees)
     {
         $this->hydrate($donnees);
     }
 
-
     /* SETTER ou accesseurs */
-
     public function setId($id)
     {
         # on parse la valeur de l'id en INT
         $id = intval($id);
         // On vérifie que l id superieur à zéro
-
         $this->_id = $id;
-
     }
-
-
     public function setNom($nom)
     {
         # on affecte le nom à l'objet si $nom est une chaine de caractères
@@ -61,8 +51,6 @@ class Option{
             $this->_nom = $nom;
         }
     }
-
-
     public function setPrix($prix)
     {
         # on parse la valeur du prix en Float
@@ -73,8 +61,6 @@ class Option{
             $this->_prix = $prix;
         }
     }
-
-
     public function setImage($image)
     {
         # on affecte le nom à l'objet si $nom est une chaine de caractères
@@ -83,11 +69,7 @@ class Option{
             $this->_image = $image;
         }
     }
-
-
     // GETTERS ou mutateurs
-
-
     /**
      * @return mixed
      */
@@ -96,8 +78,6 @@ class Option{
         # retourne l'id de l'objet en question
         return $this->_id;
     }
-
-
     /**
      * @return mixed
      */
@@ -106,7 +86,6 @@ class Option{
         # retourne le nom de l'objet en question
         return $this->_nom;
     }
-
     /**
      * @return mixed
      */
@@ -115,7 +94,6 @@ class Option{
         # retourne le prix de l'objet en question
         return $this->_prix;
     }
-
     /**
      * @return mixed
      */
@@ -124,13 +102,11 @@ class Option{
         # retourne l'image de l'objet en question
         return $this->_image;
     }
-
     public function toString()
     {
         return  $this->getId() . '<br/>' .
-                $this->getNom() . '<br/>' .
-                $this->getPrix() . '<br/>' .
-                $this->getImage() . '<br/>';
+            $this->getNom() . '<br/>' .
+            $this->getPrix() . '<br/>' .
+            $this->getImage() . '<br/>';
     }
-
 }

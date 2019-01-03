@@ -116,10 +116,10 @@ class Admin
     public function toString()
     {
         return '<pre>' . $this->getId() . '</pre>' .
-               '<pre>' . $this->getNom() . '</pre>' .
-               '<pre>' . $this->getPrenom() . '</pre>' .
-               '<pre>' . $this->getEmail() . '</pre>' .
-               '<pre>' . $this->getPassword() . '</pre>';
+            '<pre>' . $this->getNom() . '</pre>' .
+            '<pre>' . $this->getPrenom() . '</pre>' .
+            '<pre>' . $this->getEmail() . '</pre>' .
+            '<pre>' . $this->getPassword() . '</pre>';
     }
 
 

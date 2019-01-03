@@ -5,7 +5,6 @@ class AdminsManager
 {
     private $_db;
 
-    // PDO est une classe PHP déstinée à permettre à PHP de communiquer avec un serveur de données.
     public function setDb(PDO $db)
     {
         $this->_db = $db;
@@ -18,7 +17,7 @@ class AdminsManager
 
     public function getAdmin($email,$password)
     {
-        // md5 hashe les mots de passe exemple: 1f3870be274f6c49b3e31a0c6728957f
+
         $password = md5($password);
 
         $q = $this->_db->query("select * from Admins where email = '$email' and password = '$password'");

@@ -1,211 +1,196 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: bruno
+ * Date: 26/12/18
+ * Time: 13:21
+ */
 
-class FormulesManager {
-
+class FormulesManager
+{
     private $_db;
 
+    /**
+     * FormulesManager constructor.
+     * @param $_db
+     */
+    public function __construct($_db)
+    {
+        $this->_db = $_db;
+    }
+
+    /**
+     * @param mixed $db
+     */
     public function setDb($db)
     {
         $this->_db = $db;
     }
 
-    public function __construct ($db)
-    {
-        $this->setDb($db);
-    }
-
-    public function add($formule)
-    {
+    public function add($formule){
         // Préparation de la requête d'insertion.
-        // Assignation des valeurs pour le Menu.
-        // Exécution de la requête.
+        // Assignation des valeurs pour l'option.
+        $request = $this->_db->prepare('INSERT INTO Formules (NOM,PRIX,IMAGE) VALUES (:nom,:prix,:image)');
 
+        $request->bindParam(':nom', $formule->getNom());
+        $request->bindParam(':prix', $formule->getPrix());
+        $request->bindParam(':image', $formule->getImage());
 
-        $requeste = $this->_db->prepare('INSERT INTO Formules(NOM,PRIX,IMAGE) VALUES (:nom,:prix,:image)');
+        //Execution de la requête.
+        $res = $request->execute();
 
-        $requeste->bindParam(':nom',$formule->getNom());
-        $requeste->bindParam(':prix',$formule->getPrix());
-        $requeste->bindParam(':image',$formule->getImage());
-
-        // Execution de la requête
-        $requeste->execute();
-
-        // Hydratation de Formule passé en paramètre avec assignation de son identifiant et du prix initial.
+        // Hydratation du plat passé en paramètre avec assignation de identifiant et du prix initial.
         $formule->hydrate(
             [   'id'    => $this->_db->lastInsertId(),
                 'nom'   => $formule->getNom(),
                 'prix'  => $formule->getPrix(),
                 'image' => $formule->getImage()]
         );
-
-        return $formule;
-
+        return $res;
     }
 
-    public function count()
-    {
-        // Exécute une requête COUNT() et retourne le nombre de résultats retourné.
-        // fetchColumn - Retourne une colonne depuis la ligne suivante d'un jeu de resultats.
-        $requeste = $this->_db->query('SELECT count(*) FROM Formules')->fetchColumn();
+    public function count(){
+        // Execute une requête COUNT() et retourne le nombre de résultats retourné.
+        //fetchColumn — Retourne une colonne depuis la ligne suivante d'un jeu de résultats.
+        $request = $this->_db->query('SELECT count(*) FROM Formules ')->fetchColumn();
 
-        return $requeste;
-
+        return $request;
     }
 
-    public function countOption($idDeFormule)
+
+    public function countOptionsAssociatedToFormuleId($formuleId)
     {
         // Exécute une requête COUNT() et retourne le nombre de résultats retourné.
-        $requeste = $this->_db->prepare('SELECT count(*) FROM Composer WHERE IDFORMULE=:id_formule');
-        $requeste->execute(['id_formule' => $idDeFormule]);
+        $request = $this->_db->prepare('SELECT count(*) FROM Composer WHERE IDFORMULE=:id_formule');
 
-        $requeste = $requeste->fecthColumn();
+        $request->execute([':id_formule' => $formuleId]);
 
-        return $requeste;
+        $resultat = $request->fetchColumn();
+
+        return $resultat;
     }
 
     public function delete(Formule $formule)
     {
-        // Exécute une requête de type DELETE  d'abord sur la table de relation Composer Option_Formule
-        $reqDeSupp =$this->_db->exec('DELETE FROM Composer WHERE IDFORMULE = '.$formule->getId());
+        //Execute une requête de type DELETE d'abord sur la table de relation Composer Option_Formule
+        $this->_db->exec('DELETE FROM Composer WHERE IDFORMULE = '. $formule->getId());
 
-        // Exécute une requête de type DELETE sur la table Formule.
-        $requeste = $this->_db->exec('DELETE FROM Formules WHERE ID = '.$formule->getId());
+        // Execute une requête de type DELETE sur la table Option
+        $request = $this->_db->exec('DELETE FROM Formules WHERE ID = '.$formule->getId());
 
-        return $requeste;
+        return $request;
     }
 
-    public function exists($info)
-    {
-        // Si le paramètre est un entier, c'est qu'on a fourni un identifiant.
-        if(is_int($info)){
-            // On exécute alors une requête COUNT() avec une clause WHERE, et on retourne un boolean.
-            return (bool) $this->_db->query('SELECT COUNT(*) FROM Formules WHERE ID =' . $info)->fetchColumn();
-        }
-        // Sinon c'est qu'on a passé un nom.
-        else {
-            // Exécution d'une requête COUNT() avec une clause WHERE, et retourne un boolean.
-            $requeste = $this->_db->prepare('SELECT COUNT(*) FROM Formules WHERE NOM = :nom');
-            $requeste->execute([':nom' => $info]);
+    public function getFormule($id){
 
-            return (bool) $requeste->fetchColumn();
+        $request = $this->_db->query('SELECT ID, NOM, PRIX, IMAGE FROM Formules WHERE id = '. $id);
+
+        $donnees = $request->fetch(PDO::FETCH_ASSOC);
+
+        $obj = new Formule($donnees);
+
+        return $obj;
+
+    }
+
+
+    public function exists($info){
+
+        if(is_int($info)){
+
+            return (bool) $this->_db->query('SELECT count(*) FROM Formules WHERE ID =' . $info)->fetchColumn();
         }
+        else{
+            $request = $this->_db->prepare('SELECT count(*) FROM Formules WHERE NOM = :nom');
+
+            $request->bindParam(':nom', $info);
+
+            $request->execute();
+
+            return (bool) $request->fetchColumn();
+        }
+
     }
 
     public function update(Formule $formule)
     {
         // Prépare une requête de type UPDATE.
-        $requeste = $this->_db->prepare('UPDATE Formules SET NOM = :nom, PRIX = :prix, IMAGE = :image WHERE ID = :id');
+        $request = $this->_db->prepare('UPDATE Formules SET NOM = :nom, PRIX = :prix, IMAGE = :image WHERE ID = :id');
+
         // Assignation des valeurs à la requête.
-        $requeste->bindValue(':nom',$formule->getNom());
-        $requeste->bindValue(':prix',$formule->getPrix());
-        $requeste->bindValue(':image',$formule->getImage());
-        $requeste->bindValue(':id',$formule->getId());
+        $request->bindValue(':id',$formule->getId());
+        $request->bindValue(':nom',$formule->getNom());
+        $request->bindValue(':prix',$formule->getPrix());
+        $request->bindValue(':image',$formule->getImage());
 
         // Exécution de la requête.
-        $reponse = $requeste->execute();
+        $reponse = $request->execute();
 
         return $reponse;
+
     }
 
     public function updateSansImage(Formule $formule)
     {
         // Prépare une requête de type UPDATE.
-        $requeste = $this->_db->prepare('UPDATE Formule SET NOM = :nom, PRIX = :prix WHERE ID = :id');
+        $request = $this->_db->prepare('UPDATE Formules SET NOM = :nom, PRIX = :prix WHERE ID = :id');
+
         // Assignation des valeurs à la requête.
-        $requeste->bindValue(':id',$formule->getId());
-        $requeste->bindValue(':nom',$formule->getNom());
-        $requeste->bindValue(':prix',$formule->getPrix());
+        $request->bindValue(':id',$formule->getId());
+        $request->bindValue(':nom',$formule->getNom());
+        $request->bindValue(':prix',$formule->getPrix());
 
         // Exécution de la requête.
-        $reponse = $requeste->execute();
+        $reponse = $request->execute();
 
         return $reponse;
     }
 
 
-    public function getFormule($info)
-    {
-        // Si le paramètre est un entier, on veut récupérer la formule avec son identifiant.
-        // Exécute une requête de type SELECT avec une clause WHERE, et retourne un objet Formule.
-        if(is_int($info)){
-            $requeste = $this->_db->query('SELECT ID, NOM, PRIX, IMAGE FROM Formule WHERE ID = '.$info);
-            
-            $donnees = $requeste->fetch(PDO::FETCH_ASSOC);
+    public function associationOptionFormule($id_option, $id_formule){
 
-            return new Formule($donnees);
-        }
-        // Sinon, on veut récupérer le personnage avec son nom.
-        // Exécute une requête de type SELECT avec une clause WHERE, et retourne un objet Personnage.
-        else {
-            $requeste = $this->_db->prepare('SELECT ID, NOM, PRIX, IMAGE FROM Formules WHERE NOM = :nom');
-            $requeste->execute([':nom' => $info]);
+        $request = $this->_db->prepare('INSERT INTO Composer(IDOPTION,IDFORMULE) VALUES(:idoption,:idformule)');
 
-            $donnees = $requeste->fetch(PDO::FETCH_ASSOC);
-
-            return new Formule($donnees);
-        }
-    }
-
-
-    public function associationOptionFormule($idoption, $idformule) {
-
-        $idoption = intval($idoption);
-        $idformule = intval($idformule);
-
-        $requeste = $this->_db->prepare('INSERT INTO COMPOSER(IDOPTION,IDFORMULE) VALUES (:idoption,:idformule)');
-
-        $requeste->bindValue(':idoption',$idoption);
-        $requeste->bindValue(':idformule',$idformule);
-
-        $requeste->execute();
-
-    }
-
-    public function getPrixFormule($idformule)
-    {
-
-        $requeste = $this->_db->query('SELECT SUM(PRIX) AS prix_total_formule FROM Options INNER JOIN COMPOSER ON Options.id = COMPOSER.IDOPTION WHERE IDFORMULE = ' . $idformule);
-
-        // test debug
-        //  $request->debugDumpParams();
-        //  $res = $request->fetch(PDO::FETCH_ASSOC);
-        //  $res = $request->fetchColumn();
-
-        // $res = $requeste->fetch(PDO::FETCH_NUM);
-        $res = $requeste->fetch();
-
-        // $res = $requeste;
-
-        //  var_dump($res);
-
-        return $res;
-    }
-
-    public function updatePrixFormule($id) {
-
-        $newprix = $this->getPrixFormule($id);
-
-        // var_dump($newprix['prix_total_formule']);
-
-        $p = $newprix['prix_total_formule'];
-        $p = (float) $p;
-
-        // $prix = $newprix['prix_total_formule'];
-        // $prix = (float) $prix;
-
-        //  $requeste = $this->_db->query('SELECT SUM(PRIX) FROM Optiond INNER JOIN COMPOSER ON Options.ID = COMPOSER.IDOPTION  WHERE IDOPTION = '.$id);
-        //
-        //  $res = $q->fetch(PDO::FETCH_ASSOC);
-
-        $r = $this->_db->prepare('UPDATE Formules SET PRIX = :prix WHERE ID = :id');
-        // Assignation des valeurs à la requête.
-        $r->bindValue(':id',$id);
-        //  $r->bindValue(':prix',$newprix);
-        $r->bindValue(':prix',$p);
+        $request->bindValue(':idoption',$id_option);
+        $request->bindValue(':idformule',$id_formule);
 
         // Exécution de la requête.
-        $r->execute();
+        $reponse = $request->execute();
 
+        return $reponse;
+
+    }
+
+
+    public function getFormuleFullPrice($id_formule){
+
+        $request = $this->_db->query('SELECT SUM(PRIX) AS prix_total_formule FROM Options 
+                                INNER JOIN Composer ON Options.ID = Composer.IDOPTION  
+                                WHERE Composer.IDFORMULE = '. $id_formule);
+
+        $reponse = $request->fetch(PDO::FETCH_ASSOC);
+
+        $resultat = floatval($reponse["prix_total_formule"]);
+
+        return $resultat;
+
+    }
+
+    public function updatePrixFormule($id){
+
+        $full_price = $this->getFormuleFullPrice($id);
+
+        //  $res = $q->fetch(PDO::FETCH_ASSOC);
+        $request = $this->_db->prepare('UPDATE Formules SET PRIX = :prix WHERE ID = :id');
+
+        // Assignation des valeurs à la requête.
+        $request->bindValue(':id',$id);
+        $request->bindValue(':prix',$full_price);
+
+        // Exécution de la requête.
+        $reponse = $request->execute();
+
+        return $reponse;
     }
 
 
@@ -213,52 +198,38 @@ class FormulesManager {
     {
         $formules = [];
 
-        $requeste = $this->_db->query('SELECT ID, NOM, PRIX, IMAGE FROM Formules');
+        $request = $this->_db->query('SELECT ID, NOM, PRIX, IMAGE FROM Formules');
 
-        while ($donnees = $requeste->fetch(PDO::FETCH_ASSOC))
+        while ($donnees = $request->fetch(PDO::FETCH_ASSOC))
         {
-            // var_dump($donnees);
-            $formules[] = new Menu($donnees);
-
-            // $options[] = getOption($donnees['IDOPTION']);
+            $formules[] = new Formule($donnees);
         }
-
         return $formules;
     }
 
-    public function faireCorrespondreOptionsFormule($idformule,$tabOptions)
-    {
-        foreach($tabOptions as $options)
-        {
-            $requeste = $this->_db->prepare('INSERT INTO Composer(IDOPTION,IDFORMULE) VALUES(:id_option,:id_formule)');
 
-            $requeste->bindValue(':id_option',$tabOptions->getId());
-            $requeste->bindValue(':id_formule',$idformule);
-
-            $requeste->execute();
-        }
-    }
-
-    public function selectAllOptionsFormules($idDeFormule)
+    public function selectAllOptionsFromFormule($id_formule)
     {
         $options = [];
+        $request = $this->_db->query('SELECT ID, NOM, PRIX, IMAGE 
+                                      FROM Options INNER JOIN Composer 
+                                      ON Options.ID = Composer.IDOPTION WHERE IDFORMULE=' . $id_formule);
 
-        $requeste = $this->_db->query('SELECT ID, NOM, PRIX, IMAGE FROM Plats INNER JOIN Composer ON Options.ID = Composer.IDOPTION WHERE IDFORMULE='.$idDeFormule);
-
-        while($donnees = $requeste->fetch(PDO::FETCH_ASSOC))
+        while($donnees = $request->fetch(PDO::FETCH_ASSOC))
         {
             $options[] = new Option($donnees);
         }
-
         return $options;
     }
 
-    public function suppressionCorrespondanceOptionsFormule($idformule)
-    {
-        // Exécute une requête de type DELETE  sur la table Plat.
-        $requeste = $this->_db->exec('DELETE FROM Composer WHERE IDFORMULE ='.$idformule);
 
-        return $requeste;
+    public function suppressionCorrespondanceOptionsFormule($id_formule)
+    {
+        // Exécute une requête de type DELETE  sur la table Composer.
+        $request = $this->_db->exec('DELETE FROM Composer WHERE IDFORMULE =' . $id_formule);
+
+        return $request;
     }
+
 
 }
